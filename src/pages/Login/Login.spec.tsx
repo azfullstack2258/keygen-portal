@@ -31,6 +31,7 @@ const mockStore = configureMockStore<RootState, AppDispatch>([thunk as DispatchE
 test('renders login page and handles form submission', async () => {
   const store = mockStore({
     user: { token: '', profile: null, error: null, _persist: { version: -1, rehydrated: true } },
+    licenses: { licenses: null, loading: false, error: null },
   });
 
   mockLogin.mockReturnValue({
@@ -78,6 +79,7 @@ test('renders login page and handles form submission', async () => {
 test('displays error message on login failure', async () => {
   const store = mockStore({
     user: { token: '', profile: null, error: 'Failed to login', _persist: { version: -1, rehydrated: true } },
+    licenses: { licenses: null, loading: false, error: null },
   });
 
   mockLogin.mockReturnValue({
