@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { AxiosHeaders } from 'axios';
 
-import { PageLayout } from '../../components/shared';
+import { PageLayout } from '../../components';
 import { RootState } from '../../store';
 import apiClient from '../../lib/api/apiClient';
 import {

@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
 import { RootState, useAppDispatch, useAppSelector } from '../../store';
-import { fetchUser, logout } from '../../store/slices/user';
+import { fetchUser } from '../../store/slices/user';
 import { useNavigate } from 'react-router-dom';
+import { PageLayout } from '../../components';
 
 const Home = () => {
   const dispatch = useAppDispatch();
@@ -24,10 +25,9 @@ const Home = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-dark">
+    <PageLayout>
       <h1 className="text-2xl text-secondary">Hello, {profile.firstName}!</h1>
-      <button className="absolute top-4 right-4 text-white hover:text-gray" onClick={() => dispatch(logout())}>Logout</button>
-    </div>
+    </PageLayout>
   );
 };
 
