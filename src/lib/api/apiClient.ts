@@ -33,7 +33,7 @@ class APIClient {
       (error: AxiosError) => {
         if (error.response && error.response.status === 401) {
           // Handle unauthorized error, e.g., redirect to login
-          window.location.href = '/login';
+          // window.location.href = '/login'; // @todo: it should redirect to login when failing on auth protected apis calls
         }
         return Promise.reject(new Error(extractErrorMessage(error)));
       }
