@@ -171,5 +171,8 @@ Contributions are welcome! Please open an issue or submit a pull request.
 - Implement multi-factor authentication for enhanced security.
 - Enhance state management by adding more Redux slices and selectors.
 - Add internationalization (i18n) support for multiple languages.
+- Implement theme switcher - dark mode / light mode
 - Integrate with more third-party authentication providers (e.g., Google, Facebook).
 - Refactor code to improve readability, maintainability, and scalability.
+- Implement end-to-end test using cypress.
+- Add components map using Storybook.
