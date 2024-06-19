@@ -28,7 +28,12 @@ test('renders login page by default', () => {
       error: null,
       _persist: { version: -1, rehydrated: true },
     },
-    licenses: { licenses: null, loading: false, error: null },
+    licenses: {
+      licenses: null,
+      loading: false,
+      error: null,
+      _persist: { version: -1, rehydrated: true },
+    },
   });
 
   render(
@@ -60,7 +65,12 @@ test('renders home page when token is present', async () => {
       error: null,
       _persist: { version: -1, rehydrated: true },
     },
-    licenses: { licenses: null, loading: false, error: null },
+    licenses: {
+      licenses: null,
+      loading: false,
+      error: null,
+      _persist: { version: -1, rehydrated: true },
+    },
   });
 
   render(

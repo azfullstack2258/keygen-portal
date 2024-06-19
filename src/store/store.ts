@@ -20,12 +20,19 @@ const persistConfig = {
   blacklist: ['error'],
 };
 
+const licensesPersistConfig = {
+  key: 'licenses',
+  storage,
+  blacklist: ['loading', 'error'],
+};
+
 const persistedUserReducer = persistReducer(persistConfig, userReducer);
+const persistedLicensesReducer = persistReducer(licensesPersistConfig, licensesReducer);
 
 export const store = configureStore({
   reducer: {
     user: persistedUserReducer,
-    licenses: licensesReducer,
+    licenses: persistedLicensesReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

@@ -33,7 +33,12 @@ test('renders loading state', () => {
       error: null,
       _persist: { version: -1, rehydrated: true },
     },
-    licenses: { licenses: null, loading: false, error: null },
+    licenses: {
+      licenses: null,
+      loading: false,
+      error: null,
+      _persist: { version: -1, rehydrated: true },
+    },
   });
 
   render(
@@ -54,7 +59,12 @@ test('renders user greeting', async () => {
       error: null,
       _persist: { version: -1, rehydrated: true },
     },
-    licenses: { licenses: null, loading: false, error: null },
+    licenses: {
+      licenses: null,
+      loading: false,
+      error: null,
+      _persist: { version: -1, rehydrated: true },
+    },
   });
 
   store.dispatch = jest.fn();

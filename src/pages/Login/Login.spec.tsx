@@ -26,12 +26,24 @@ const mockLogin = login as jest.MockedFunction<typeof login>;
 
 type DispatchExts = ThunkMiddleware<RootState, any>;
 
-const mockStore = configureMockStore<RootState, AppDispatch>([thunk as DispatchExts]);
+const mockStore = configureMockStore<RootState, AppDispatch>([
+  thunk as DispatchExts,
+]);
 
 test('renders login page and handles form submission', async () => {
   const store = mockStore({
-    user: { token: '', profile: null, error: null, _persist: { version: -1, rehydrated: true } },
-    licenses: { licenses: null, loading: false, error: null },
+    user: {
+      token: '',
+      profile: null,
+      error: null,
+      _persist: { version: -1, rehydrated: true },
+    },
+    licenses: {
+      licenses: null,
+      loading: false,
+      error: null,
+      _persist: { version: -1, rehydrated: true },
+    },
   });
 
   mockLogin.mockReturnValue({
@@ -50,7 +62,9 @@ test('renders login page and handles form submission', async () => {
     </Provider>
   );
 
-  expect(screen.getByRole('heading', { name: /Welcome back/i })).toBeInTheDocument();
+  expect(
+    screen.getByRole('heading', { name: /Welcome back/i })
+  ).toBeInTheDocument();
 
   fireEvent.change(screen.getByLabelText(/Email/i), {
     target: { value: 'elliot@keygen.example' },
@@ -78,8 +92,18 @@ test('renders login page and handles form submission', async () => {
 
 test('displays error message on login failure', async () => {
   const store = mockStore({
-    user: { token: '', profile: null, error: 'Failed to login', _persist: { version: -1, rehydrated: true } },
-    licenses: { licenses: null, loading: false, error: null },
+    user: {
+      token: '',
+      profile: null,
+      error: 'Failed to login',
+      _persist: { version: -1, rehydrated: true },
+    },
+    licenses: {
+      licenses: null,
+      loading: false,
+      error: null,
+      _persist: { version: -1, rehydrated: true },
+    },
   });
 
   mockLogin.mockReturnValue({
