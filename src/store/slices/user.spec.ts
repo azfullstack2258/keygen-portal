@@ -1,10 +1,16 @@
-import userReducer, { setToken, setProfile, logout, fetchUser } from './user';
+import userReducer, { setToken, setProfile, logout, fetchUser, login } from './user';
 import { configureStore } from '@reduxjs/toolkit';
 import thunk, { ThunkMiddleware } from 'redux-thunk';
 import { AnyAction } from 'redux';
 import { RootState } from '../store';
 import { persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
+import apiClient from '../../lib/api/apiClient';
+import axios from 'axios';
+
+// Mock Axios
+jest.mock('axios');
+const mockedAxios = axios as jest.Mocked<typeof axios>;
 
 interface UserState {
   token: string;
@@ -39,9 +45,6 @@ const createMockStore = (initialState: Partial<RootState>) => {
   });
 };
 
-// Mock fetch for user data
-global.fetch = jest.fn() as jest.Mock;
-
 describe('user reducer', () => {
   it('should handle initial state', () => {
     expect(userReducer(undefined, { type: 'unknown' })).toEqual(initialState);
@@ -68,13 +71,15 @@ describe('user reducer', () => {
   });
 
   it('should handle fetchUser', async () => {
-    (global.fetch as jest.Mock).mockImplementationOnce(() =>
-      Promise.resolve({
-        json: () => Promise.resolve({
-          data: { attributes: { firstName: 'Elliot' } }
-        })
-      })
-    );
+    mockedAxios.get.mockResolvedValueOnce({
+      data: {
+        data: {
+          attributes: {
+            firstName: 'Elliot',
+          },
+        },
+      },
+    });
 
     const store = createMockStore({ user: { ...initialState, token: 'mockToken', _persist: { version: -1, rehydrated: true } } });
 
@@ -86,16 +91,67 @@ describe('user reducer', () => {
   });
 
   it('should handle fetchUser failure', async () => {
-    (global.fetch as jest.Mock).mockImplementationOnce(() =>
-      Promise.reject(new Error('Failed to fetch user'))
-    );
+    mockedAxios.get.mockRejectedValueOnce({
+      response: {
+        data: {
+          errors: [
+            {
+              detail: 'Failed to fetch user',
+            },
+          ],
+        },
+      },
+    });
 
     const store = createMockStore({ user: { ...initialState, token: 'mockToken', _persist: { version: -1, rehydrated: true } } });
 
     await store.dispatch(fetchUser() as unknown as AnyAction);
+
     const state = store.getState().user as UserState;
     console.log('State after fetchUser failure:', state); // Debugging line
     expect(state.token).toEqual('');
     expect(state.profile).toBeNull();
+  });
+
+  it('should handle login', async () => {
+    mockedAxios.post.mockResolvedValueOnce({
+      data: {
+        data: {
+          attributes: {
+            token: 'mockToken',
+          },
+        },
+      },
+    });
+
+    const store = createMockStore({ user: {...initialState,_persist: { version: -1, rehydrated: true }} });
+
+    await store.dispatch(login({ email: 'test@example.com', password: 'password' }) as unknown as AnyAction);
+
+    const state = store.getState().user as UserState;
+    expect(state.token).toEqual('mockToken');
+    expect(state.error).toBeNull();
+  });
+
+  it('should handle login failure', async () => {
+    mockedAxios.post.mockRejectedValueOnce({
+      response: {
+        data: {
+          errors: [
+            {
+              detail: 'Login failed',
+            },
+          ],
+        },
+      },
+    });
+
+    const store = createMockStore({ user: {...initialState,_persist: { version: -1, rehydrated: true }} });
+
+    await store.dispatch(login({ email: 'test@example.com', password: 'wrongpassword' }) as unknown as AnyAction);
+
+    const state = store.getState().user as UserState;
+    expect(state.token).toEqual('');
+    expect(state.error).toEqual('Login failed');
   });
 });

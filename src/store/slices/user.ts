@@ -1,8 +1,11 @@
-import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { AxiosHeaders } from 'axios';
+import apiClient from '../../lib/api/apiClient';
 import { RootState } from '../store';
+import type { TokensResponse, AccountInfoResponse } from '../../typings/api';
 
 interface UserState {
-  token: string | null;
+  token: string;
   profile: {
     firstName: string;
   } | null;
@@ -16,23 +19,20 @@ const initialState: UserState = {
 };
 
 export const login = createAsyncThunk(
-  'auth/login',
+  'user/login',
   async ({ email, password }: { email: string; password: string }, { rejectWithValue }) => {
     try {
-      const response = await fetch('https://api.keygen.sh/v1/accounts/demo/tokens', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Basic ${btoa(`${email}:${password}`)}`,
-        },
+      const creds = btoa(`${email}:${password}`);
+      const { data: res } = await apiClient.post<TokensResponse>('/tokens', null, {
+        headers: new AxiosHeaders({
+          Authorization: `Basic ${creds}`,
+          Accept: 'application/json',
+        }),
       });
-      const data = await response.json();
-      if (!response.ok) {
-        return rejectWithValue(data.message || 'Something went wrong');
-      }
-      return data.token;
+      localStorage.setItem('token', res.data.attributes.token);
+      return res.data.attributes.token;
     } catch (error: any) {
-      return rejectWithValue('Failed to login');
+      return rejectWithValue(error.response?.data?.errors?.[0]?.detail || 'Login failed');
     }
   }
 );
@@ -43,17 +43,15 @@ export const fetchUser = createAsyncThunk(
     const state = getState() as RootState;
     const token = state.user.token;
     try {
-      const res = await fetch('https://api.keygen.sh/v1/accounts/demo/me', {
-        method: 'GET',
-        headers: {
-          authorization: `Bearer ${token}`,
-          accept: 'application/json',
-        },
+      const { data: res } = await apiClient.get<AccountInfoResponse>('/me', {
+        headers: new AxiosHeaders({
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json',
+        }),
       });
-      const result = await res.json();
-      return result.data.attributes.firstName;
+      return res.data.attributes.firstName;
     } catch (error: any) {
-      return rejectWithValue(error.message);
+      return rejectWithValue(error.response?.data?.errors?.[0]?.detail || 'Failed to fetch user');
     }
   }
 );
@@ -71,17 +69,10 @@ const userSlice = createSlice({
     logout(state) {
       state.token = '';
       state.profile = null;
-      state.error = null;
+      localStorage.removeItem('token');
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchUser.fulfilled, (state, action: PayloadAction<string>) => {
-      state.profile = { firstName: action.payload };
-    });
-    builder.addCase(fetchUser.rejected, (state, action) => {
-      state.token = '';
-      state.profile = null;
-    });
     builder.addCase(login.fulfilled, (state, action: PayloadAction<string>) => {
       state.token = action.payload;
       state.error = null;
@@ -89,7 +80,14 @@ const userSlice = createSlice({
     builder.addCase(login.rejected, (state, action) => {
       state.error = action.payload as string;
     });
-  }
+    builder.addCase(fetchUser.fulfilled, (state, action: PayloadAction<string>) => {
+      state.profile = { firstName: action.payload };
+      state.error = null;
+    });
+    builder.addCase(fetchUser.rejected, (state, action) => {
+      state.error = action.payload as string;
+    });
+  },
 });
 
 export const { setToken, setProfile, logout } = userSlice.actions;

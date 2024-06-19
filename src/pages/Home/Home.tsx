@@ -12,7 +12,6 @@ const Home = () => {
   useEffect(() => {
     if (token) {
       dispatch(fetchUser()).unwrap().catch((error: any) => {
-        console.error('Failed to fetch user:', error);
         navigate('/login');
       });
     } else {
@@ -27,7 +26,7 @@ const Home = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-dark">
       <h1 className="text-2xl text-secondary">Hello, {profile.firstName}!</h1>
-      <button onClick={() => dispatch(logout())}>Logout</button>
+      <button className="absolute top-4 right-4 text-white hover:text-gray" onClick={() => dispatch(logout())}>Logout</button>
     </div>
   );
 };

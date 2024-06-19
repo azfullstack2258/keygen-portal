@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { login } from '../../store/slices/user';
 import { RootState, useAppDispatch, useAppSelector } from '../../store';
@@ -14,15 +15,22 @@ interface IFormInput {
 }
 
 const LoginPage: React.FC = () => {
+  const navigate = useNavigate();
   const { control, handleSubmit, formState: { errors } } = useForm<IFormInput>({
     resolver: yupResolver(loginSchema)
   });
   const dispatch = useAppDispatch();
-  const error = useAppSelector((state: RootState) => state.user.error);
+  const { token, error } = useAppSelector((state: RootState) => state.user);
 
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
     dispatch(login(data));
   };
+
+  useEffect(() => {
+    if (token) {
+      navigate('/');
+    }
+  }, [token, navigate]);
 
   return (
     <div className="flex min-h-screen bg-black text-white">
@@ -34,12 +42,12 @@ const LoginPage: React.FC = () => {
           <h2 className="mt-6 text-3xl font-extrabold text-white">Welcome back</h2>
           <p className="mt-2 text-sm text-gray-400">Sign in to your account</p>
         </div>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Button type="button" className="bg-gray-800 hover:bg-gray-700 flex items-center justify-center">
+        <div>
+          <Button type="button" className="bg-gray-800 hover:bg-gray-700 flex items-center justify-center gap-1">
             <GithubIcon />
             Continue with GitHub
           </Button>
-          <Button type="button" className="mt-4 bg-gray-800 hover:bg-gray-700 flex items-center justify-center">
+          <Button type="button" className="mt-4 bg-gray-800 hover:bg-gray-700 flex items-center justify-center gap-1">
             <SSOIcon />
             Continue with SSO
           </Button>
@@ -60,7 +68,6 @@ const LoginPage: React.FC = () => {
             placeholder="you@example.com"
             required
           />
-          {errors.email && <ErrorMessage message={errors.email.message!} />}
           <FormInput
             name="password"
             control={control}
@@ -70,7 +77,6 @@ const LoginPage: React.FC = () => {
             placeholder="••••••••"
             required
           />
-          {errors.password && <ErrorMessage message={errors.password.message!} />}
           {error && <ErrorMessage message={error} />}
           <div className="mt-6 flex items-center justify-between">
             <div className="text-sm">
@@ -80,11 +86,11 @@ const LoginPage: React.FC = () => {
             </div>
           </div>
           <div className="mt-6">
-            <Button type="submit" className="bg-green-600 hover:bg-green-500">
+            <Button className="bg-green-600 hover:bg-green-500" onClick={handleSubmit(onSubmit)}>
               Sign In
             </Button>
           </div>
-        </form>
+        </div>
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-400">
             Don't have an account?{' '}
