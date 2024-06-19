@@ -2,16 +2,40 @@ import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { RootState } from '../store';
 
 interface UserState {
-  token: string;
+  token: string | null;
   profile: {
     firstName: string;
   } | null;
+  error: string | null;
 }
 
 const initialState: UserState = {
   token: '',
   profile: null,
+  error: null,
 };
+
+export const login = createAsyncThunk(
+  'auth/login',
+  async ({ email, password }: { email: string; password: string }, { rejectWithValue }) => {
+    try {
+      const response = await fetch('https://api.keygen.sh/v1/accounts/demo/tokens', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Basic ${btoa(`${email}:${password}`)}`,
+        },
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        return rejectWithValue(data.message || 'Something went wrong');
+      }
+      return data.token;
+    } catch (error: any) {
+      return rejectWithValue('Failed to login');
+    }
+  }
+);
 
 export const fetchUser = createAsyncThunk(
   'user/fetchUser',
@@ -28,7 +52,7 @@ export const fetchUser = createAsyncThunk(
       });
       const result = await res.json();
       return result.data.attributes.firstName;
-    } catch (error) {
+    } catch (error: any) {
       return rejectWithValue(error.message);
     }
   }
@@ -47,6 +71,7 @@ const userSlice = createSlice({
     logout(state) {
       state.token = '';
       state.profile = null;
+      state.error = null;
     },
   },
   extraReducers: (builder) => {
@@ -56,6 +81,13 @@ const userSlice = createSlice({
     builder.addCase(fetchUser.rejected, (state, action) => {
       state.token = '';
       state.profile = null;
+    });
+    builder.addCase(login.fulfilled, (state, action: PayloadAction<string>) => {
+      state.token = action.payload;
+      state.error = null;
+    });
+    builder.addCase(login.rejected, (state, action) => {
+      state.error = action.payload as string;
     });
   }
 });

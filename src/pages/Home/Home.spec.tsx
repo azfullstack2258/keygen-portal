@@ -6,7 +6,7 @@ import thunk, { ThunkMiddleware, ThunkDispatch } from 'redux-thunk';
 import { Provider } from 'react-redux';
 import { BrowserRouter as Router } from 'react-router-dom';
 import Home from './Home';
-import { RootState } from '../../store';
+import { RootState, AppDispatch } from '../../store';
 
 // Mock fetch for user data
 global.fetch = jest.fn(() =>
@@ -18,13 +18,12 @@ global.fetch = jest.fn(() =>
 ) as jest.Mock;
 
 // Define the middleware type
-type DispatchExts = ThunkDispatch<RootState, void, AnyAction>;
+type DispatchExts = ThunkMiddleware<RootState, any>;
 
-const middlewares = [thunk];
-const mockStore = configureMockStore<RootState, DispatchExts>(middlewares);
+const mockStore = configureMockStore<RootState, AppDispatch>([thunk as DispatchExts]);
 
 test('renders loading state', () => {
-  const store = mockStore({ user: { token: '', profile: null } });
+  const store = mockStore({ user: { token: '', profile: null, error: null, _persist: { version: -1, rehydrated: true } } });
 
   render(
     <Provider store={store}>
@@ -38,7 +37,7 @@ test('renders loading state', () => {
 
 test('renders user greeting', async () => {
   const store = mockStore({
-    user: { token: 'mockToken', profile: null }
+    user: { token: 'mockToken', profile: null, error: null, _persist: { version: -1, rehydrated: true } }
   });
 
   store.dispatch = jest.fn();

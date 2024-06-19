@@ -15,14 +15,14 @@ interface UserState {
     version: number;
     rehydrated: boolean;
   };
+  error: string | null;
 }
 
 const initialState: UserState = {
   token: '',
   profile: null,
+  error: null,
 };
-
-type DispatchExts = ThunkMiddleware<RootState, void, AnyAction>;
 
 const persistConfig = {
   key: 'user',
@@ -40,13 +40,7 @@ const createMockStore = (initialState: Partial<RootState>) => {
 };
 
 // Mock fetch for user data
-global.fetch = jest.fn(() =>
-  Promise.resolve({
-    json: () => Promise.resolve({
-      data: { attributes: { firstName: 'Elliot' } }
-    })
-  })
-) as jest.Mock;
+global.fetch = jest.fn() as jest.Mock;
 
 describe('user reducer', () => {
   it('should handle initial state', () => {
@@ -67,12 +61,21 @@ describe('user reducer', () => {
     const state = {
       token: 'mockToken',
       profile: { firstName: 'Elliot' },
+      error: null,
     };
     const actual = userReducer(state, logout());
     expect(actual).toEqual(initialState);
   });
 
   it('should handle fetchUser', async () => {
+    (global.fetch as jest.Mock).mockImplementationOnce(() =>
+      Promise.resolve({
+        json: () => Promise.resolve({
+          data: { attributes: { firstName: 'Elliot' } }
+        })
+      })
+    );
+
     const store = createMockStore({ user: { ...initialState, token: 'mockToken', _persist: { version: -1, rehydrated: true } } });
 
     await store.dispatch(fetchUser() as unknown as AnyAction);

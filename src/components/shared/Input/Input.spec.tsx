@@ -1,14 +1,36 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import React from 'react';
+import { render, screen } from '@testing-library/react';
 import Input from './Input';
 
-test('renders input with placeholder', () => {
-  render(<Input type="text" placeholder="Enter text" value="" onChange={() => {}} />);
-  expect(screen.getByPlaceholderText(/Enter text/i)).toBeInTheDocument();
+test('renders Input component with correct props', () => {
+  render(
+    <Input
+      id="email"
+      name="email"
+      type="email"
+      label="Email"
+      placeholder="you@example.com"
+      required
+    />
+  );
+
+  expect(screen.getByLabelText(/Email/i)).toBeInTheDocument();
+  expect(screen.getByPlaceholderText(/you@example.com/i)).toBeInTheDocument();
 });
 
-test('calls onChange when input value changes', () => {
-  const handleChange = jest.fn();
-  render(<Input type="text" placeholder="Enter text" value="" onChange={handleChange} />);
-  fireEvent.change(screen.getByPlaceholderText(/Enter text/i), { target: { value: 'New Value' } });
-  expect(handleChange).toHaveBeenCalledTimes(1);
+test('forwards ref correctly', () => {
+  const ref = React.createRef<HTMLInputElement>();
+  render(
+    <Input
+      id="email"
+      name="email"
+      type="email"
+      label="Email"
+      placeholder="you@example.com"
+      required
+      ref={ref}
+    />
+  );
+
+  expect(ref.current).toBeInstanceOf(HTMLInputElement);
 });
