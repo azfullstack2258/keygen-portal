@@ -1,11 +1,12 @@
-# Keygen Authentication App
+# Keygen Portal
 
-This project is a simple authentication application using React, Redux Toolkit, Axios, and Tailwind CSS. The application demonstrates user login functionality with a secure token-based authentication system.
+Keygen Portal is a React application demonstrating user authentication using Keygen's API. It includes features such as user login, token-based authentication, and user greetings after login.
 
 ## Table of Contents
 
 - [Features](#features)
 - [Technologies](#technologies)
+- [File Structure](#file-structure)
 - [Setup](#setup)
 - [Usage](#usage)
 - [API Client](#api-client)
@@ -34,6 +35,49 @@ This project is a simple authentication application using React, Redux Toolkit, 
 - Redux Persist
 - React Router
 - Jest and React Testing Library for testing
+
+## File Structure
+
+```plaintext
+keygen-portal/
+├── public/
+│   ├── index.html
+│   └── logo.png
+├── src/
+│   ├── assets/
+│   │   └── images/
+│   ├── components/
+│   │   ├── Button.tsx
+│   │   ├── ErrorMessage.tsx
+│   │   ├── FormInput.tsx
+│   │   ├── GithubIcon.tsx
+│   │   ├── Input.tsx
+│   │   └── SSOIcon.tsx
+│   ├── hooks/
+│   │   └── useAppSelector.ts
+│   ├── lib/
+│   │   ├── api/
+│   │   │   └── apiClient.ts
+│   │   └── errorHandler.ts
+│   ├── pages/
+│   │   ├── Home.tsx
+│   │   └── Login.tsx
+│   ├── store/
+│   │   ├── slices/
+│   │   │   └── user.ts
+│   │   └── index.ts
+│   ├── typings/
+│   │   └── api.ts
+│   ├── utils/
+│   │   └── validationSchema.ts
+│   ├── App.tsx
+│   └── index.tsx
+├── .env
+├── .gitignore
+├── package.json
+├── README.md
+└── tsconfig.json
+```
 
 ## Setup
 
@@ -79,8 +123,19 @@ Handles user authentication and state management.
 
 
 ## Components
-LoginPage
-Handles the user login form and submission.
+### Button
+Reusable button component with different styles.
+
+### Input
+Reusable input component with forwardRef.
+
+### ErrorMessage
+Component to display error messages.
+
+### FormInput
+Form input component integrated with React Hook Form.
+
+### Icons
 
 
 ## Testing
@@ -102,3 +157,19 @@ Contributions are welcome! Please open an issue or submit a pull request.
 
 
 ## License
+
+## ToDo
+- Config font-family in tailwind and use the provided font assets.
+- Fix spec failures after `apiClient` implementation.
+- Implement more comprehensive form validation and error handling using Yup.
+- Add unit tests for all components and hooks to ensure complete test coverage.
+- Optimize performance by implementing lazy loading and code splitting.
+- Improve the UI/UX design to make it more visually appealing and user-friendly.
+
+## New features that I'd like to add
+- Add user registration and password reset functionality.
+- Implement multi-factor authentication for enhanced security.
+- Enhance state management by adding more Redux slices and selectors.
+- Add internationalization (i18n) support for multiple languages.
+- Integrate with more third-party authentication providers (e.g., Google, Facebook).
+- Refactor code to improve readability, maintainability, and scalability.
