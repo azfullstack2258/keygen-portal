@@ -15,22 +15,18 @@ export type AccountInfoResponse = {
 };
 
 export type LicenseInfo = {
-  attributes: {
-    name: string;
-    created: Date;
-    expiry: Date;
-    key: string;
-    status: 'ACTIVE' | 'EXPIRED';
-  };
+  name: string;
+  created: Date;
+  expiry: Date;
+  key: string;
+  status: 'ACTIVE' | 'EXPIRED';
   id: string;
 };
 
 export type LicenseEntitlementInfo = {
-  attributes: {
-    created: Date;
-    name: string;
-    code: string;
-  };
+  created: Date;
+  name: string;
+  code: string;
   id: string;
 };
 
@@ -39,7 +35,10 @@ export type LicensesResponse = {
 };
 
 export type LicenseEntitlementsResponse = {
-  data: LicenseEntitlementInfo[];
+  data: {
+    id: Pick<LicenseEntitlementInfo, 'id'>,
+    attributes: Pick<LicenseEntitlementInfo, 'created' | 'code' | 'name'>
+  }[];
 };
 
 export type LicenseWithEntitlements = LicenseInfo & {

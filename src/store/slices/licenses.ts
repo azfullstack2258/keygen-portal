@@ -44,7 +44,10 @@ export const fetchLicenses = createAsyncThunk(
                 }),
               }
             );
-          return { ...license, entitlements: entitlementsData.data };
+          return { id: license.id, ...license.attributes, entitlements: entitlementsData.data.map((entitlement) => ({
+            id: entitlement.id,
+            ...entitlement.attributes,
+          })) };
         })
       );
 
