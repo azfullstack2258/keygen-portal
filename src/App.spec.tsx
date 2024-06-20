@@ -16,10 +16,25 @@ global.fetch = jest.fn() as jest.Mock;
 type DispatchExts = ThunkMiddleware<RootState, any>;
 
 // Configure mock store with the correct types
-const mockStore = configureMockStore<RootState, AppDispatch>([thunk as DispatchExts]);
+const mockStore = configureMockStore<RootState, AppDispatch>([
+  thunk as DispatchExts,
+]);
 
 test('renders login page by default', () => {
-  const store = mockStore({ user: { token: '', profile: null, error: null, _persist: { version: -1, rehydrated: true } } });
+  const store = mockStore({
+    user: {
+      token: '',
+      profile: null,
+      error: null,
+      _persist: { version: -1, rehydrated: true },
+    },
+    licenses: {
+      licenses: null,
+      loading: false,
+      error: null,
+      _persist: { version: -1, rehydrated: true },
+    },
+  });
 
   render(
     <Provider store={store}>
@@ -28,20 +43,34 @@ test('renders login page by default', () => {
       </Router>
     </Provider>
   );
-  expect(screen.getByRole('heading', { name: /Welcome back/i })).toBeInTheDocument();
+  expect(
+    screen.getByRole('heading', { name: /Welcome back/i })
+  ).toBeInTheDocument();
 });
 
 test('renders home page when token is present', async () => {
   (global.fetch as jest.Mock).mockImplementationOnce(() =>
     Promise.resolve({
-      json: () => Promise.resolve({
-        data: { attributes: { firstName: 'Elliot' } }
-      })
+      json: () =>
+        Promise.resolve({
+          data: { attributes: { firstName: 'Elliot' } },
+        }),
     })
   );
 
   const store = mockStore({
-    user: { token: 'mockToken', profile: null, error: null, _persist: { version: -1, rehydrated: true } }
+    user: {
+      token: 'mockToken',
+      profile: null,
+      error: null,
+      _persist: { version: -1, rehydrated: true },
+    },
+    licenses: {
+      licenses: null,
+      loading: false,
+      error: null,
+      _persist: { version: -1, rehydrated: true },
+    },
   });
 
   render(
@@ -59,12 +88,17 @@ test('renders home page when token is present', async () => {
   await store.dispatch(fetchUser() as unknown as AnyAction);
 
   // Wait for the Loading... text to be removed
-  await waitFor(() => expect(screen.queryByText(/Loading.../i)).not.toBeInTheDocument());
+  await waitFor(() =>
+    expect(screen.queryByText(/Loading.../i)).not.toBeInTheDocument()
+  );
 
   // Wait for the DOM to update with the new state
-  await waitFor(() => {
-    expect(screen.getByText(/Hello, Elliot!/i)).toBeInTheDocument();
-  }, {
-    timeout: 5
-  });
+  await waitFor(
+    () => {
+      expect(screen.getByText(/Hello, Elliot!/i)).toBeInTheDocument();
+    },
+    {
+      timeout: 5,
+    }
+  );
 });

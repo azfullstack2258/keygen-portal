@@ -1,6 +1,6 @@
 # Keygen Portal
 
-Keygen Portal is a React application demonstrating user authentication using Keygen's API. It includes features such as user login, token-based authentication, and user greetings after login.
+Keygen Portal is a React application demonstrating user authentication using Keygen's API. It includes features such as user login, token-based authentication, user greetings after login, and user licenses information.
 
 ## Table of Contents
 
@@ -23,6 +23,8 @@ Keygen Portal is a React application demonstrating user authentication using Key
 - User greeting after login
 - Error handling for API requests
 - Responsive design using Tailwind CSS
+- Display user licenses with entitlements
+- Reusable table component with pagination
 
 ## Technologies
 
@@ -47,12 +49,18 @@ keygen-portal/
 │   ├── assets/
 │   │   └── images/
 │   ├── components/
-│   │   ├── Button.tsx
-│   │   ├── ErrorMessage.tsx
-│   │   ├── FormInput.tsx
-│   │   ├── GithubIcon.tsx
-│   │   ├── Input.tsx
-│   │   └── SSOIcon.tsx
+│   │   ├── shared
+│   │   │   ├── Button.tsx
+│   │   │   ├── ErrorMessage.tsx
+│   │   │   ├── Input.tsx
+│   │   │   └── Table.tsx
+│   │   ├── form
+│   │   │   └── FormInput.tsx
+│   │   ├── icons
+│   │   │   ├── GithubIcon.tsx
+│   │   │   └── SSOIcon.tsx
+│   │   ├── Header.tsx
+│   │   └── PageLayout.tsx
 │   ├── hooks/
 │   │   └── useAppSelector.ts
 │   ├── lib/
@@ -61,13 +69,16 @@ keygen-portal/
 │   │   └── errorHandler.ts
 │   ├── pages/
 │   │   ├── Home.tsx
+│   │   ├── Licenses.tsx
 │   │   └── Login.tsx
 │   ├── store/
 │   │   ├── slices/
-│   │   │   └── user.ts
+│   │   │   ├── user.ts
+│   │   │   └── licenses.ts
 │   │   └── index.ts
 │   ├── typings/
-│   │   └── api.ts
+│   │   ├── api.ts
+│   │   └── ui.ts
 │   ├── utils/
 │   │   └── validationSchema.ts
 │   ├── App.tsx
@@ -76,6 +87,8 @@ keygen-portal/
 ├── .gitignore
 ├── package.json
 ├── README.md
+├── jest.config.js
+├── jest.setup.js
 └── tsconfig.json
 ```
 
@@ -106,12 +119,16 @@ keygen-portal/
 5. Open your browser and navigate to http://localhost:3000.
 
 ## Usage
-Login
-Navigate to the login page.
-Enter your email and password.
-Click "Sign In".
-If the credentials are correct, you will be redirected to the home page with a greeting message.
+### Login
+1. Navigate to the login page.
+2. Enter your email and password.
+3. Click "Sign In".
+4. If the credentials are correct, you will be redirected to the home page with a greeting message.
 
+### Licenses
+1. Navigate to the licenses page.
+2. View the list of licenses with their entitlements, creation date, and expiry date.
+3. Use pagination to navigate through the list of licenses.
 
 ## API Client
 The apiClient handles API integrations and errors using Axios.
@@ -121,6 +138,8 @@ The apiClient handles API integrations and errors using Axios.
 ### userSlice
 Handles user authentication and state management.
 
+### licensesSlice
+Handles fetching and storing licenses and their entitlements.
 
 ## Components
 ### Button
@@ -131,6 +150,12 @@ Reusable input component with forwardRef.
 
 ### ErrorMessage
 Component to display error messages.
+
+### Table
+Reusable table component with pagination.
+
+### PageLayout
+Layout component to wrap pages with common layout elements.
 
 ### FormInput
 Form input component integrated with React Hook Form.
@@ -151,6 +176,8 @@ Tests for the Home page component.
 ### App.spec.tsx
 Tests for the App component.
 
+### Table.spec.tsx
+Tests for the Table component.
 
 ## Contributing
 Contributions are welcome! Please open an issue or submit a pull request.
